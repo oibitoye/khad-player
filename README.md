@@ -62,6 +62,11 @@ UI tabs → application → playback / search / queue / history / playlist servi
 
 Licence file pending founder confirmation. Third-party notices: `NOTICE.md`.
 
+## Preview release
+
+Planned first public preview: **`v0.1.0-alpha.1`** (package `0.1.0a1`).  
+See [docs/RELEASE.md](docs/RELEASE.md) and [docs/KNOWN_LIMITATIONS.md](docs/KNOWN_LIMITATIONS.md).
+
 ## Contributing
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md), [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md), and [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md).

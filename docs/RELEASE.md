@@ -1,39 +1,63 @@
 # Release process
 
-Semantic versioning starts at **0.1.0** (`pyproject.toml` and `src/khad_media_player/__init__.py`).
+Package versions use [PEP 440](https://peps.python.org/pep-0440/).  
+Git tags use a readable SemVer-style form.
 
-## Release candidate checklist
+| Git tag | Package version (`pyproject.toml`) |
+|---|---|
+| `v0.1.0-alpha.1` | `0.1.0a1` |
+| `v0.1.0-rc.1` | `0.1.0rc1` |
+| `v0.1.0` | `0.1.0` |
 
-Before tagging:
+Current prep target: **`v0.1.0-alpha.1`** / **`0.1.0a1`**.
 
-- [ ] CI on `main` is green
-- [ ] `python -m build` succeeds locally
-- [ ] `CHANGELOG.md` updated for the release
+## Alpha.1 checklist (before tagging)
+
+- [ ] CI on `main` is green (including `Linux integration (mpv)`)
+- [ ] `python -m build` succeeds
+- [ ] `./scripts/verify_wheel_install.sh` passes
+- [ ] `./scripts/verify_linux_install_path.sh` reviewed on a Linux desktop (or noted as CI-limited)
+- [ ] `CHANGELOG.md` has an `0.1.0a1` section
 - [ ] Version strings match in `pyproject.toml` and `__init__.py`
-- [ ] Maintainer approval
-- [ ] `docs/COMPATIBILITY.md` reflects honest platform evidence (no unverified claims)
+- [ ] [KNOWN_LIMITATIONS.md](KNOWN_LIMITATIONS.md) reviewed
+- [ ] [COMPATIBILITY.md](COMPATIBILITY.md) has no unverified claims marked as supported
+- [ ] **Licence decision** recorded (or explicitly deferred — do not invent a licence file)
+- [ ] Maintainer approval to publish the GitHub Release
+- [ ] Optional: minimal real-device playback smoke on at least one Linux host
 
-## Creating a release
+## Creating the alpha GitHub Release
 
-1. Merge the release prep PR to `main` (squash preferred).
-2. Tag annotated release:
+Human-controlled. Do **not** auto-publish to PyPI/Homebrew.
 
 ```bash
-git checkout main
-git pull
-git tag -a v0.1.0 -m "v0.1.0"
-git push origin v0.1.0
+git switch main
+git pull --ff-only origin main
+# confirm version is 0.1.0a1
+git tag -a v0.1.0-alpha.1 -m "v0.1.0-alpha.1"
+git push origin v0.1.0-alpha.1
 ```
 
-3. The **Release** workflow validates, builds artifacts and creates a GitHub Release for `v*` tags.
-4. Manual alternative: Actions → Release → Run workflow.
+The **Release** workflow will:
 
-## What is not automated
+1. Validate (compile, lint, unit tests)
+2. Build wheel + sdist
+3. Write `SHA256SUMS`
+4. Create a **prerelease** GitHub Release with artifacts
 
-- Publishing to **PyPI**, **Homebrew** or other registries (requires explicit founder approval)
-- Claiming new platform support without runtime evidence
-- Releases from ordinary pull requests
+Attach or link:
+
+- Installation: [INSTALL_LINUX.md](INSTALL_LINUX.md), [INSTALL_MACOS.md](INSTALL_MACOS.md)
+- Limitations: [KNOWN_LIMITATIONS.md](KNOWN_LIMITATIONS.md)
+
+## Outputs for alpha.1
+
+| Asset | Include? |
+|---|---|
+| Wheel + sdist + SHA256SUMS | Yes |
+| Linux from-source instructions | Yes |
+| macOS `.app` | **No** until GUI/playback evidence |
+| PyPI upload | **No** without founder approval |
 
 ## Preferred merge strategy
 
-Use **squash merge** into `main` so history stays linear and Conventional Commit summaries remain readable.
+Squash-merge prep PRs into `main`, then tag from `main`.

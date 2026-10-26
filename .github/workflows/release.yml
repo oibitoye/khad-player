@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Existing tag to build (for example v0.1.0). Leave empty when triggered by tag push."
+        description: "Existing tag to build (for example v0.1.0-alpha.1). Leave empty when triggered by tag push."
         required: false
         type: string
 
@@ -54,19 +54,46 @@ jobs:
       - name: Verify version consistency
         run: |
           python - <<'PY'
+          import os
+          import re
           import tomllib
           from pathlib import Path
+
           version = tomllib.loads(Path("pyproject.toml").read_text())["project"]["version"]
           init = Path("src/khad_media_player/__init__.py").read_text()
           assert f'__version__ = "{version}"' in init, (version, init)
-          print("version OK:", version)
+
+          github_ref = os.environ.get("GITHUB_REF", "")
+          if github_ref.startswith("refs/tags/v"):
+              tag = github_ref.removeprefix("refs/tags/")
+              sem = tag[1:]
+              # v0.1.0-alpha.1 -> 0.1.0a1 ; v0.1.0-rc.1 -> 0.1.0rc1
+              pep = re.sub(r"-alpha\.(\d+)", r"a\1", sem)
+              pep = re.sub(r"-beta\.(\d+)", r"b\1", pep)
+              pep = re.sub(r"-rc\.(\d+)", r"rc\1", pep)
+              assert pep == version, f"tag {tag} normalises to {pep}, package is {version}"
+              print("tag/package version OK:", tag, "->", version)
+          else:
+              print("version OK:", version)
           PY
+
+      - name: Verify wheel install
+        run: |
+          chmod +x scripts/verify_wheel_install.sh
+          ./scripts/verify_wheel_install.sh
+
+      - name: Generate SHA256SUMS
+        run: |
+          cd dist
+          shasum -a 256 * > SHA256SUMS
+          cat SHA256SUMS
 
       - name: Upload dist artifacts
         uses: actions/upload-artifact@v4
         with:
           name: release-dist
-          path: dist/
+          path: |
+            dist/*
           if-no-files-found: error
 
   github-release:
@@ -89,9 +116,16 @@ jobs:
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/*
+          files: |
+            dist/*
           generate_release_notes: true
           draft: false
-          prerelease: ${{ contains(github.ref_name, 'rc') || contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') }}
+          prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
+          body: |
+            Early preview — see `docs/KNOWN_LIMITATIONS.md`.
+
+            **Not included:** macOS `.app`, PyPI/Homebrew publish, unverified platform claims.
+
+            **Install:** wheel/sdist below, plus system GTK/mpv/yt-dlp per `docs/INSTALL_*.md`.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
