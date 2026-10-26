@@ -4,8 +4,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from khad_media_player.services.playlist_parser import (
     filter_entries,
     looks_like_hls_manifest,
@@ -13,7 +11,6 @@ from khad_media_player.services.playlist_parser import (
     parse_m3u_text,
     resolve_relative_url,
 )
-
 
 SAMPLE_IPTV = """#EXTM3U
 #EXTINF:-1 group-title="News",BBC News

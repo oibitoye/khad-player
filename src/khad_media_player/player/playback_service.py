@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 from khad_media_player.player.backend import PlaybackBackend, RenderMode
 from khad_media_player.player.external_backend import ExternalBackend

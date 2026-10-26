@@ -4,9 +4,8 @@ from __future__ import annotations
 
 import os
 import sys
+from collections.abc import Sequence
 from dataclasses import dataclass, field
-from typing import Sequence
-
 
 APP_NAME = "Khad Media Player"
 APP_ID = "io.khad.MediaPlayer"

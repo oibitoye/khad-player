@@ -4,6 +4,7 @@
 
 ### Added
 
+- Contribution pipeline: issue/PR templates, CODEOWNERS, Dependabot, hardened CI/release workflows, CODE_OF_CONDUCT, SECURITY policy, branch-protection and release docs
 - Modular `khad_media_player` package extracted from the Yoga Media Player prototype
 - Cross-platform paths (XDG on Linux; Application Support / Caches on macOS)
 - Executable discovery for `mpv` and `yt-dlp` (`KHAD_MPV_PATH`, `KHAD_YTDLP_PATH`)

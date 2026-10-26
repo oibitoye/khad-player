@@ -64,4 +64,8 @@ Licence file pending founder confirmation. Third-party notices: `NOTICE.md`.
 
 ## Contributing
 
-See `CONTRIBUTING.md` and `docs/DEVELOPMENT.md`.
+See [`CONTRIBUTING.md`](CONTRIBUTING.md), [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md), and [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md).
+
+Security vulnerabilities: [`SECURITY.md`](SECURITY.md) (private advisory — do not open public issues).
+
+Release and branch protection (maintainers): [`docs/RELEASE.md`](docs/RELEASE.md), [`docs/BRANCH_PROTECTION.md`](docs/BRANCH_PROTECTION.md).

@@ -1,0 +1,54 @@
+name: Feature request
+description: Suggest an improvement that preserves accepted product behaviour
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Prefer behaviour-preserving improvements over redesigns.
+        Large UX or architecture changes need maintainer discussion first.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What problem are you trying to solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposed
+    attributes:
+      label: Proposed behaviour
+      description: Describe the desired behaviour without redesigning unrelated tabs.
+    validations:
+      required: true
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use case
+    validations:
+      required: true
+  - type: dropdown
+    id: platforms
+    attributes:
+      label: Affected platforms
+      multiple: true
+      options:
+        - Linux
+        - macOS Intel
+        - macOS Apple Silicon
+        - All platforms
+        - Unsure
+    validations:
+      required: true
+  - type: textarea
+    id: compatibility
+    attributes:
+      label: Potential compatibility impacts
+      description: Playback, queue, search, IPTV browsing, history, packaging or render modes.
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope confirmation
+      options:
+        - label: This request preserves the accepted five-tab workflows unless a documented defect requires change.
+          required: true

@@ -4,14 +4,13 @@ from __future__ import annotations
 
 import json
 import subprocess
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable
 
 from khad_media_player.config import SEARCH_RESULT_COUNT
 from khad_media_player.dependencies import find_ytdlp
 from khad_media_player.models.media import MediaItem
 from khad_media_player.services.title_cache import TitleCache
-
 
 SearchCallback = Callable[[list[MediaItem], str], None]
 

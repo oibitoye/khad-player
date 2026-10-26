@@ -1,0 +1,85 @@
+name: Bug report
+description: Report a defect in Khad Media Player
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve Khad Media Player.
+        Do **not** include personal playlists, history files, credentials or private media.
+  - type: input
+    id: app-version
+    attributes:
+      label: Application version
+      description: From pyproject.toml / package version, or commit SHA if running from source.
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Linux (Debian/Ubuntu)
+        - Linux (other)
+        - macOS Intel
+        - macOS Apple Silicon
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: arch
+    attributes:
+      label: CPU architecture
+      placeholder: "x86_64 / arm64"
+    validations:
+      required: true
+  - type: textarea
+    id: deps
+    attributes:
+      label: Dependencies
+      description: Python, GTK/PyGObject, mpv, yt-dlp versions if known. Paste `scripts/check_dependencies.py` output when possible.
+      placeholder: |
+        Python:
+        GTK / PyGObject:
+        mpv:
+        yt-dlp:
+        KHAD_RENDER_MODE (if set):
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / screenshots
+      description: Redact personal URLs and private playlist content.
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety and privacy confirmation
+      options:
+        - label: I have not attached personal playlists, history caches, credentials or private media.
+          required: true
+        - label: This report does not intentionally disclose an unfixed security vulnerability (use private security reporting instead).
+          required: true

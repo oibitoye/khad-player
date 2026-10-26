@@ -1,0 +1,30 @@
+name: Documentation issue
+description: Report incorrect, unclear or missing documentation
+labels: ["documentation"]
+body:
+  - type: input
+    id: location
+    attributes:
+      label: Document location
+      description: File path or URL (for example docs/INSTALL_LINUX.md).
+      placeholder: docs/...
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is wrong or missing?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed correction
+      description: Suggested wording or outline is helpful but not required.
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirmation
+      options:
+        - label: I checked README.md and the linked docs before opening this issue.
+          required: true

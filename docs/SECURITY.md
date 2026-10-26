@@ -1,8 +1,9 @@
-# Security
+# Security (runtime notes)
 
 ## Reporting
 
-Report security issues privately to the project maintainers. Do not open public issues for unfixed vulnerabilities.
+**Use the private advisory process described in [SECURITY.md](../SECURITY.md).**  
+Do not open public issues for unfixed vulnerabilities.
 
 ## Local mpv IPC
 

@@ -11,7 +11,6 @@ import pytest
 from khad_media_player.config import resolve_mpv_profile
 from khad_media_player.player.mpv_process import MpvProcess
 
-
 pytestmark = pytest.mark.skipif(
     shutil.which("mpv") is None, reason="mpv not installed"
 )

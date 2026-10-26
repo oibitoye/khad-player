@@ -2,30 +2,108 @@ name: CI
 
 on:
   push:
-    branches: [main, master]
+    branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  test:
+  linux:
+    name: Linux (Ubuntu)
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         python-version: ["3.11", "3.12"]
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install package and test deps
+
+      - name: Install package and development dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -e ".[dev]"
+          python -m pip install -e ".[dev]"
+          python -m pip install build
+
       - name: Compile
         run: python -m compileall -q src
-      - name: Lint
+
+      - name: Ruff lint
         run: python -m ruff check src tests
+
       - name: Unit tests
         run: python -m pytest tests/unit -q
-      - name: Integration tests (skip if no mpv)
+
+      - name: Install mpv for optional integration tests
+        run: sudo apt-get update && sudo apt-get install -y mpv
+
+      - name: Integration tests
         run: python -m pytest tests/integration -q
+
+      - name: Dependency sanity check (non-GTK soft probe)
+        run: |
+          python - <<'PY'
+          from khad_media_player.dependencies import check_dependencies
+          status = check_dependencies()
+          print(status)
+          assert status.get("mpv"), status
+          # yt-dlp may be absent on CI images; warn but do not fail baseline compile/test jobs
+          if not status.get("yt-dlp"):
+              print("NOTE: yt-dlp not on PATH in CI image (documented limitation)")
+          PY
+
+      - name: Package build
+        run: python -m build
+
+      - name: Upload build artifacts
+        if: matrix.python-version == '3.12'
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-linux-py312
+          path: dist/
+          if-no-files-found: error
+
+  macos:
+    name: macOS (non-GUI)
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install package and development dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+          python -m pip install build
+
+      - name: Compile
+        run: python -m compileall -q src
+
+      - name: Ruff lint
+        run: python -m ruff check src tests
+
+      - name: Unit tests (non-GUI)
+        run: python -m pytest tests/unit -q
+
+      - name: Package build
+        run: python -m build
+
+      - name: Note on GTK/mpv GUI
+        run: |
+          echo "This job does not claim native GTK/mpv GUI runtime verification."
+          echo "Record runtime evidence in docs/COMPATIBILITY.md only after manual testing."

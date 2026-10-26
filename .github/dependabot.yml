@@ -1,0 +1,33 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+    labels:
+      - dependencies
+      - ci
+
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      python-dev:
+        patterns:
+          - "pytest*"
+          - "ruff*"
+      python-embed:
+        patterns:
+          - "mpv"
+    labels:
+      - dependencies
+    # Do not auto-merge; CI on the PR must pass before maintainer merge.
