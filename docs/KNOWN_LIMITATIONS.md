@@ -26,8 +26,10 @@ See [COMPATIBILITY.md](COMPATIBILITY.md). Unverified cells remain **NOT TESTED**
 |---|---|
 | Python wheel / sdist | Built and install-verified in CI |
 | Linux Debian/Ubuntu from-source path | Documented; install-path smoke script provided |
-| Linux `.deb` / Flatpak / AppImage | Not included |
-| macOS `.app` | Not included |
+| Linux `.deb` | Buildable via `./scripts/build_deb.sh` (system GTK/mpv deps); CI builds artifact; **not** archive-uploadable until licence is set |
+| Flatpak | Experimental host-mpv bridge (`./scripts/build_flatpak.sh`); embedded libmpv unsupported; **not** Flathub-ready until licence is set |
+| Linux AppImage | Not included |
+| macOS `.app` / `.dmg` | Not included |
 | PyPI / Homebrew publish | Not enabled |
 
 ## Dependencies

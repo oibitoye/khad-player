@@ -1,0 +1,47 @@
+# Experimental Flatpak for Khad Media Player (alpha).
+#
+# Host mpv bridge: the sandbox runs the GTK UI; mpv is executed on the host
+# via flatpak-spawn (KHAD_MPV_PATH=/app/bin/mpv-host).
+# Embedded libmpv is not supported in this Flatpak until mpv is bundled.
+#
+# Not Flathub-ready until an OSI licence is confirmed.
+#
+# Build: ./scripts/build_flatpak.sh
+
+app-id: io.khad.MediaPlayer
+runtime: org.gnome.Platform
+runtime-version: "47"
+sdk: org.gnome.Sdk
+command: khad-media-player
+
+finish-args:
+  - --share=ipc
+  - --share=network
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --device=dri
+  - --socket=pulseaudio
+  - --filesystem=xdg-videos:ro
+  - --filesystem=xdg-download:ro
+  - --filesystem=home
+  - --talk-name=org.freedesktop.Flatpak
+  - --env=KHAD_RENDER_MODE=external
+  - --env=KHAD_MPV_PATH=/app/bin/mpv-host
+
+modules:
+  - name: khad-media-player
+    buildsystem: simple
+    build-options:
+      build-args:
+        - --share=network
+    build-commands:
+      - pip3 install --verbose --prefix=${FLATPAK_DEST} yt-dlp
+      - pip3 install --verbose --prefix=${FLATPAK_DEST} .
+      - install -Dm755 packaging/flatpak/mpv-host.sh ${FLATPAK_DEST}/bin/mpv-host
+      - install -Dm644 packaging/linux/io.khad.MediaPlayer.desktop
+          ${FLATPAK_DEST}/share/applications/io.khad.MediaPlayer.desktop
+      - install -Dm644 packaging/flatpak/io.khad.MediaPlayer.metainfo.xml
+          ${FLATPAK_DEST}/share/metainfo/io.khad.MediaPlayer.metainfo.xml
+    sources:
+      - type: dir
+        path: ../..

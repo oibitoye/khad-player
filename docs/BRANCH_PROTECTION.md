@@ -25,6 +25,7 @@ Enable:
      - `macOS (non-GUI)`
      - Optional but recommended once stable: `Linux integration (mpv)`
        (mpv install runs in this dedicated job only, so the Python matrix stays fast)
+     - Optional: `Linux .deb package`
 5. **Require a pull request review**
    - **If an independent reviewer is available:** require 1 approving review and optionally require CODEOWNERS review
    - **If the founder is the sole maintainer:** do **not** enable a mandatory approval that blocks self-maintained merges. Keep CODEOWNERS review *requests* enabled; avoid a deadlock.

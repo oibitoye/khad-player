@@ -61,6 +61,36 @@ jobs:
           path: dist/
           if-no-files-found: error
 
+  linux-deb:
+    name: Linux .deb package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install packaging tools
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends dpkg-dev
+          python -m pip install --upgrade pip build
+
+      - name: Build .deb
+        run: |
+          chmod +x scripts/build_deb.sh
+          ./scripts/build_deb.sh
+
+      - name: Upload .deb artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-deb
+          path: dist/*.deb
+          if-no-files-found: error
+
   linux-integration:
     name: Linux integration (mpv)
     runs-on: ubuntu-latest

@@ -54,8 +54,10 @@ Attach or link:
 | Asset | Include? |
 |---|---|
 | Wheel + sdist + SHA256SUMS | Yes |
+| Linux `.deb` | Yes (local/CI artifact; not Debian-archive upload) |
+| Flatpak bundle | Optional / experimental (host mpv); not Flathub |
 | Linux from-source instructions | Yes |
-| macOS `.app` | **No** until GUI/playback evidence |
+| macOS `.app` / `.dmg` | **No** until GUI/playback evidence |
 | PyPI upload | **No** without founder approval |
 
 ## Preferred merge strategy
