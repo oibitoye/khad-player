@@ -23,6 +23,8 @@ Enable:
      - `Linux (Ubuntu) (3.11)` / matrix equivalents as shown in Actions
      - `Linux (Ubuntu) (3.12)`
      - `macOS (non-GUI)`
+     - Optional but recommended once stable: `Linux integration (mpv)`
+       (mpv install runs in this dedicated job only, so the Python matrix stays fast)
 5. **Require a pull request review**
    - **If an independent reviewer is available:** require 1 approving review and optionally require CODEOWNERS review
    - **If the founder is the sole maintainer:** do **not** enable a mandatory approval that blocks self-maintained merges. Keep CODEOWNERS review *requests* enabled; avoid a deadlock.
