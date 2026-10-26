@@ -7,8 +7,8 @@ flowchart TB
   UI[ui tabs] --> App[application.py]
   App --> Playback[playback_service]
   Playback --> RenderMode{render mode}
-  RenderMode -->|external default| MpvProc[mpv_process + mpv_ipc]
-  RenderMode -->|embedded planned| Libmpv[libmpv Render API]
+  RenderMode -->|external fallback| MpvProc[mpv_process + mpv_ipc]
+  RenderMode -->|embedded preferred| Libmpv[libmpv Render API + Gtk.GLArea]
   App --> Search[youtube_search]
   App --> Queue[queue_service]
   App --> History[history_service]
@@ -30,10 +30,12 @@ flowchart TB
 
 ## Playback modes
 
-- **External (default):** spawn mpv with `--input-ipc-server` and control via JSON IPC
-- **Embedded (planned):** libmpv Render API widget; external remains fallback
+- **Embedded (preferred when available):** in-process libmpv via `python-mpv`, frames drawn with the **Render API** into `Gtk.GLArea` (`ui/video_area.py`). Not window-handle (`wid`) embedding.
+- **External (fallback / baseline):** spawn mpv with `--input-ipc-server` and control via JSON IPC
 
-UI code must call `PlaybackService`, not construct mpv CLI arguments.
+Selection: `player/render_selection.py` (`KHAD_RENDER_MODE=auto|embedded|external`).
+
+UI code must call `PlaybackService`, not construct mpv CLI arguments. Queue/play logic is shared across modes.
 
 ## Legacy baseline
 

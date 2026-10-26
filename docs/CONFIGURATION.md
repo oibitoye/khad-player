@@ -7,6 +7,15 @@
 | `KHAD_MPV_PATH` | Absolute path to `mpv` |
 | `KHAD_YTDLP_PATH` | Absolute path to `yt-dlp` |
 | `KHAD_MPV_PROFILE` | Renderer profile name |
+| `KHAD_RENDER_MODE` | `auto` (default), `embedded`, or `external` |
+
+### Render modes
+
+- **`auto`** — try embedded libmpv Render API; fall back to external mpv window
+- **`embedded`** — require in-window video (`pip install '.[embed]'` + system libmpv); fall back if init fails
+- **`external`** — always use the separate mpv window (legacy baseline)
+
+Embedded mode is preferred UX but only claimed per platform after runtime verification.
 
 ## Profiles
 

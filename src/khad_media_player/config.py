@@ -22,6 +22,7 @@ YTDL_FORMAT = (
 ENV_MPV_PATH = "KHAD_MPV_PATH"
 ENV_YTDLP_PATH = "KHAD_YTDLP_PATH"
 ENV_RENDER_PROFILE = "KHAD_MPV_PROFILE"
+ENV_RENDER_MODE = "KHAD_RENDER_MODE"  # auto | embedded | external
 
 
 @dataclass(frozen=True)

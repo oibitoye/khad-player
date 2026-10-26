@@ -1,56 +1,84 @@
-"""Playback operations shared by UI tabs and future render modes."""
+"""Playback operations shared by UI tabs across render modes."""
 
 from __future__ import annotations
 
-from enum import Enum
 from pathlib import Path
 from typing import Any, Callable
 
-from khad_media_player.config import resolve_mpv_profile
-from khad_media_player.paths import ipc_socket_path
-from khad_media_player.player.mpv_process import MpvProcess
+from khad_media_player.player.backend import PlaybackBackend, RenderMode
+from khad_media_player.player.external_backend import ExternalBackend
+from khad_media_player.player.render_selection import create_backend
 
-
-class RenderMode(str, Enum):
-    """Preferred UX is embedded (Phase F); external is the working baseline."""
-
-    EXTERNAL = "external"
-    EMBEDDED = "embedded"
+# Re-export for existing imports
+__all__ = ["PlaybackService", "RenderMode"]
 
 
 class PlaybackService:
-    """Control playback without depending on a specific render surface."""
+    """Control playback without depending on a particular render surface."""
 
     def __init__(
         self,
         socket_path: Path | None = None,
-        render_mode: RenderMode = RenderMode.EXTERNAL,
+        render_mode: RenderMode | None = None,
         on_history: Callable[[str], None] | None = None,
     ) -> None:
-        self.socket_path = socket_path or ipc_socket_path()
-        self.render_mode = render_mode
         self.on_history = on_history
-        self._external = MpvProcess(
-            self.socket_path,
-            profile=resolve_mpv_profile(),
-        )
+        self._preferred = render_mode
+        self._socket_path = socket_path
+        self._backend: PlaybackBackend | None = None
+        self.render_mode = RenderMode.EXTERNAL
+        self.mode_note = ""
+        self._video_widget = None
 
     @property
-    def process(self) -> MpvProcess:
-        return self._external
+    def backend(self) -> PlaybackBackend:
+        if self._backend is None:
+            self.start()
+        assert self._backend is not None
+        return self._backend
+
+    @property
+    def process(self) -> Any:
+        """Legacy access used by UI readiness checks for external mode."""
+        backend = self.backend
+        if isinstance(backend, ExternalBackend):
+            return backend.process
+        return None
 
     def start(self) -> None:
-        # Embedded mode reuses process/IPC until Phase F lands a libmpv widget.
-        self._external.ensure_started()
+        if self._backend is not None:
+            return
+        backend, mode, note = create_backend(self._preferred)
+        if isinstance(backend, ExternalBackend) and self._socket_path is not None:
+            backend = ExternalBackend(self._socket_path)
+        self._backend = backend
+        self.render_mode = mode
+        self.mode_note = note
+        if isinstance(self._backend, ExternalBackend):
+            self._backend.start()
+        if self.render_mode == RenderMode.EMBEDDED:
+            self._video_widget = self._backend.create_video_widget()
+
+    def video_widget(self):
+        return self._video_widget
+
+    def is_embedded(self) -> bool:
+        return self.render_mode == RenderMode.EMBEDDED
 
     def shutdown(self) -> None:
-        self._external.terminate()
+        if self._backend is not None:
+            self._backend.shutdown()
+            self._backend = None
+        self._video_widget = None
 
     def command(self, *args: Any) -> dict[str, Any]:
-        return self._external.ipc.command(*args)
+        return self.backend.command(*args)
 
     def is_ready(self) -> bool:
-        return self._external.ipc.is_ready()
+        return self.backend.is_ready()
+
+    def failed_to_start(self) -> bool:
+        return self.backend.failed_to_start()
 
     def play_preserving_queue(self, url: str) -> dict[str, Any]:
         """Play URL without clearing existing playlist items (legacy behaviour)."""
@@ -67,7 +95,7 @@ class PlaybackService:
             if count.get("error") != "success":
                 return count
 
-            total = count.get("data", 0)
+            total = count.get("data", 0) or 0
             if total > 1:
                 moved = self.command("playlist-move", total - 1, 0)
                 if moved.get("error") != "success":
@@ -107,4 +135,21 @@ class PlaybackService:
         if result.get("error") != "success":
             return []
         data = result.get("data") or []
-        return data if isinstance(data, list) else []
+        if isinstance(data, list):
+            # python-mpv may return MPV playlist objects — normalise to dicts
+            normalised: list[dict[str, Any]] = []
+            for item in data:
+                if isinstance(item, dict):
+                    normalised.append(item)
+                else:
+                    normalised.append(
+                        {
+                            "filename": getattr(item, "filename", None)
+                            or getattr(item, "url", "")
+                            or str(item),
+                            "title": getattr(item, "title", None),
+                            "current": bool(getattr(item, "current", False)),
+                        }
+                    )
+            return normalised
+        return []

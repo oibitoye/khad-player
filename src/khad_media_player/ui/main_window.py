@@ -35,10 +35,14 @@ class MainWindow:
 
         self.window = Gtk.ApplicationWindow(application=application)
         self.window.set_title(APP_NAME)
-        self.window.set_default_size(800, 600)
+        size = (960, 720) if playback.is_embedded() else (800, 600)
+        self.window.set_default_size(*size)
 
         header = Gtk.HeaderBar()
-        header.set_title("Media Player")
+        header.set_title(APP_NAME)
+        header.set_subtitle(
+            "Embedded" if playback.is_embedded() else "External mpv"
+        )
         hide = Gtk.Button(label="Hide")
         hide.connect("clicked", lambda _b: self.window.hide())
         header.pack_end(hide)
@@ -98,11 +102,21 @@ class MainWindow:
     def check_player(self) -> bool:
         if self.playback.is_ready():
             if self.now_playing.status.get_text() == "Player starting...":
-                self.now_playing.set_status("Player ready")
+                note = self.playback.mode_note
+                self.now_playing.set_status(
+                    f"Player ready ({'embedded' if self.playback.is_embedded() else 'external'})"
+                )
+                if note:
+                    self.now_playing.mode_label.set_text(note)
             return False
+        if self.playback.failed_to_start():
+            self.now_playing.set_status("mpv failed to start")
+            return False
+        process = self.playback.process
         if (
-            self.playback.process.process is not None
-            and self.playback.process.process.poll() is not None
+            process is not None
+            and process.process is not None
+            and process.process.poll() is not None
         ):
             self.now_playing.set_status("mpv failed to start")
             return False

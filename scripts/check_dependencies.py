@@ -41,6 +41,16 @@ def main() -> int:
             errors.append(f"{name}: {message}")
             print(f"{name}: FAIL ({message})")
 
+    from khad_media_player.player.embedded_backend import embedded_prerequisites
+
+    embed_ok, embed_reason = embedded_prerequisites()
+    if embed_ok:
+        print("Embedded libmpv (optional): OK")
+    else:
+        print(f"Embedded libmpv (optional): unavailable ({embed_reason})")
+        print("  Install with: pip install 'khad-media-player[embed]' and system libmpv")
+        print("  Fallback: external mpv window (KHAD_RENDER_MODE=external)")
+
     if errors:
         print("\nActionable next steps:")
         print("- Linux: install python3-gi, gir1.2-gtk-3.0, mpv, yt-dlp via your package manager")

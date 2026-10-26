@@ -11,14 +11,17 @@
 - Unit and optional mpv integration tests
 - Linux desktop launcher and install scripts
 - Documentation set under `docs/`
+- **Phase F:** embedded playback via libmpv Render API + `Gtk.GLArea`, with automatic fallback to external mpv (`KHAD_RENDER_MODE`)
+- Optional extra: `pip install '.[embed]'` (python-mpv)
 
 ### Changed
 
 - Application identity: **Khad Media Player** (`io.khad.MediaPlayer`)
 - History and title cache stored under Khad data directories (one-time import from Yoga data when present)
+- Now Playing shows an in-window video surface when embedded mode is active
 
 ### Notes
 
-- External mpv window remains the default playback mode
-- Embedded libmpv rendering is deferred (Phase F)
-- Yoga tablet video-freeze issue remains unresolved
+- External mpv window remains the safe fallback and behavioural baseline
+- Embedded mode is preferred when prerequisites succeed; per-platform support is **NOT TESTED** until runtime evidence exists
+- Yoga tablet video-freeze issue remains unresolved; do not stress-test unstable video on Yoga without approval

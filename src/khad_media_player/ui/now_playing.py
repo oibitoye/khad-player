@@ -13,12 +13,31 @@ from khad_media_player.player.playback_service import PlaybackService
 class NowPlayingTab:
     def __init__(self, playback: PlaybackService) -> None:
         self.playback = playback
-        self.widget = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=15)
-        self.widget.set_border_width(20)
+        self.widget = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+        self.widget.set_border_width(12)
+
+        video = playback.video_widget()
+        if video is not None:
+            frame = Gtk.Frame(label="Video")
+            frame.add(video)
+            self.widget.pack_start(frame, True, True, 0)
+            mode_hint = "Embedded playback (libmpv)"
+        else:
+            mode_hint = "External mpv window"
+            placeholder = Gtk.Label(
+                label="Video plays in the separate mpv window.\n"
+                "Set KHAD_RENDER_MODE=embedded when libmpv is available."
+            )
+            placeholder.set_line_wrap(True)
+            placeholder.set_justify(Gtk.Justification.CENTER)
+            self.widget.pack_start(placeholder, True, True, 0)
+
+        controls = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        controls.set_border_width(8)
 
         self.url = Gtk.Entry()
         self.url.set_placeholder_text("Paste media URL")
-        self.widget.pack_start(self.url, False, False, 0)
+        controls.pack_start(self.url, False, False, 0)
 
         buttons = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
         actions = [
@@ -31,7 +50,7 @@ class NowPlayingTab:
             btn = Gtk.Button(label=name)
             btn.connect("clicked", callback)
             buttons.pack_start(btn, True, True, 0)
-        self.widget.pack_start(buttons, False, False, 0)
+        controls.pack_start(buttons, False, False, 0)
 
         seek_buttons = Gtk.Box(spacing=8)
         for label, seconds in [
@@ -46,10 +65,16 @@ class NowPlayingTab:
                 lambda _b, n=seconds: self.control(("seek", n, "relative")),
             )
             seek_buttons.pack_start(button, True, True, 0)
-        self.widget.pack_start(seek_buttons, False, False, 0)
+        controls.pack_start(seek_buttons, False, False, 0)
 
         self.status = Gtk.Label(label="Player starting...")
-        self.widget.pack_start(self.status, False, False, 0)
+        controls.pack_start(self.status, False, False, 0)
+
+        self.mode_label = Gtk.Label(label=mode_hint)
+        self.mode_label.set_opacity(0.7)
+        controls.pack_start(self.mode_label, False, False, 0)
+
+        self.widget.pack_start(controls, False, False, 0)
 
     def set_url(self, url: str) -> None:
         self.url.set_text(url)
@@ -63,7 +88,10 @@ class NowPlayingTab:
         if result.get("error") == "success":
             self.status.set_text("Loading media...")
         else:
-            self.status.set_text("Player not ready")
+            detail = result.get("error", "unknown")
+            self.status.set_text(
+                "Player not ready" if detail == "Player not ready" else f"Playback failed: {detail}"
+            )
 
     def control(self, action: tuple) -> None:
         result = self.playback.control(*action)

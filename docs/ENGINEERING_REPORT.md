@@ -2,7 +2,7 @@
 
 ## Summary
 
-The Yoga Media Player monolith (`src/app.py`, ~1021 lines) was preserved and extracted into the modular package `src/khad_media_player/` without a greenfield rewrite. External mpv + JSON IPC remains the default playback path. Embedded libmpv rendering is deferred (Phase F per suplementary2).
+The Yoga Media Player monolith (`src/app.py`, ~1021 lines) was preserved and extracted into the modular package `src/khad_media_player/` without a greenfield rewrite. External mpv + JSON IPC remains the fallback baseline. **Phase F** adds preferred embedded playback via the libmpv Render API into `Gtk.GLArea`, with automatic fallback when prerequisites fail.
 
 ## Baseline
 
@@ -46,11 +46,12 @@ See `docs/COMPATIBILITY.md` — runtime verification **NOT TESTED** in the build
 
 ## Known issues / follow-ups
 
-- Phase F: embedded libmpv Render API
+- Embedded libmpv: implemented; **runtime verification NOT TESTED** per platform (see `docs/COMPATIBILITY.md`)
+- OpenGL Render API + GTK3 GLArea may need platform-specific tuning (Wayland/X11/macOS)
 - `.app` bundle after dual-arch macOS smoke tests
-- Yoga video freeze unresolved
+- Yoga video freeze unresolved — do not run unstable embed tests on Yoga without approval
 - Licence file awaiting founder choice
-- GitHub remote / publish awaiting founder approval
+- GitHub visibility / signing decisions awaiting founder approval
 
 ## Recommended first release
 

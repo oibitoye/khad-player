@@ -12,7 +12,7 @@ Khad Media Player is a modular refactor of the Yoga Media Player prototype. It p
 - **Open** — local files, URLs, and IPTV M3U channel browsing
 - **History** — recent media with replay and queue actions
 
-Playback uses an external mpv window by default. Embedded libmpv rendering is planned (see `docs/ARCHITECTURE.md`).
+Playback prefers **embedded** libmpv Render API video in the main window when `python-mpv`/libmpv are available (`pip install '.[embed]'`), and falls back to an **external** mpv window otherwise. Override with `KHAD_RENDER_MODE=external|embedded|auto` (see `docs/CONFIGURATION.md`).
 
 ## Platform status
 
