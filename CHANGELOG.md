@@ -2,7 +2,16 @@
 
 ## Unreleased
 
-## 0.1.0a1 — 2026-10-26 (planned tag: v0.1.0-alpha.1)
+## 0.1.0a2 — 2026-10-26 (tag: v0.1.0-alpha.2)
+
+Preview packaging cut including Debian `.deb` builder and experimental Flatpak (host-mpv). Still not production-ready.
+
+### Added since 0.1.0a1
+
+- `scripts/build_deb.sh` + CI `.deb` artifact
+- Experimental Flatpak host-mpv bridge (`packaging/flatpak/`)
+
+## 0.1.0a1 — 2026-10-26 (tag: v0.1.0-alpha.1)
 
 First public **preview** packaging cut. Not production-ready.
 

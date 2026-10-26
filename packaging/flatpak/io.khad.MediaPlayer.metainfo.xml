@@ -20,9 +20,9 @@
   <launchable type="desktop-id">io.khad.MediaPlayer.desktop</launchable>
   <url type="homepage">https://github.com/oibitoye/khad-player</url>
   <releases>
-    <release version="0.1.0a1" date="2026-10-26" type="development">
+    <release version="0.1.0a2" date="2026-10-26" type="development">
       <description>
-        <p>Alpha preview packaging. See docs/KNOWN_LIMITATIONS.md.</p>
+        <p>Alpha preview with .deb builder and experimental Flatpak. See docs/KNOWN_LIMITATIONS.md.</p>
       </description>
     </release>
   </releases>
