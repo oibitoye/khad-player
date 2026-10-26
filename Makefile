@@ -1,7 +1,7 @@
-.PHONY: help install check test lint compile deps build verify-wheel release-check
+.PHONY: help install check test lint compile deps build verify-wheel deb flatpak release-check
 
 help:
-	@echo "Targets: install check test lint compile deps build verify-wheel release-check"
+	@echo "Targets: install check test lint compile deps build verify-wheel deb flatpak release-check"
 
 install:
 	python3 -m pip install -e ".[dev]"
@@ -27,5 +27,14 @@ verify-wheel: build
 	chmod +x scripts/verify_wheel_install.sh
 	./scripts/verify_wheel_install.sh
 
+deb:
+	chmod +x scripts/build_deb.sh
+	./scripts/build_deb.sh
+
+flatpak:
+	chmod +x scripts/build_flatpak.sh
+	./scripts/build_flatpak.sh
+
 release-check: lint compile test verify-wheel
 	@echo "Release checks passed for local prep (GUI/playback still manual)."
+	@echo "Optional: make deb (Debian/Ubuntu) / make flatpak (experimental)"

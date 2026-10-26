@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.khad.MediaPlayer</id>
+  <name>Khad Media Player</name>
+  <summary>GTK media and IPTV player powered by mpv</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <!-- Project licence pending founder confirmation — not Flathub-ready. -->
+  <project_license>LicenseRef-proprietary</project_license>
+  <developer_name>Khad Media Player contributors</developer_name>
+  <description>
+    <p>
+      Khad Media Player is a GTK 3 frontend for media URL playback, YouTube search
+      via yt-dlp, queue management, IPTV M3U browsing and history.
+    </p>
+    <p>
+      This Flatpak build uses the host system mpv binary (external window mode).
+      Embedded libmpv rendering is not supported in this package yet.
+    </p>
+  </description>
+  <launchable type="desktop-id">io.khad.MediaPlayer.desktop</launchable>
+  <url type="homepage">https://github.com/oibitoye/khad-player</url>
+  <releases>
+    <release version="0.1.0a1" date="2026-10-26" type="development">
+      <description>
+        <p>Alpha preview packaging. See docs/KNOWN_LIMITATIONS.md.</p>
+      </description>
+    </release>
+  </releases>
+  <content_rating type="oars-1.1" />
+</component>

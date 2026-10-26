@@ -20,6 +20,9 @@ htmlcov/
 build/
 dist/
 *.egg-info/
+*.deb
+*.flatpak
+.flatpak-builder/
 .eggs/
 
 # Application user state (never commit)

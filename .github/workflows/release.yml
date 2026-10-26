@@ -82,6 +82,13 @@ jobs:
           chmod +x scripts/verify_wheel_install.sh
           ./scripts/verify_wheel_install.sh
 
+      - name: Build .deb
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends dpkg-dev
+          chmod +x scripts/build_deb.sh
+          ./scripts/build_deb.sh
+
       - name: Generate SHA256SUMS
         run: |
           cd dist

@@ -19,6 +19,8 @@ First public **preview** packaging cut. Not production-ready.
 - Embedded playback via libmpv Render API + `Gtk.GLArea`, with automatic fallback to external mpv (`KHAD_RENDER_MODE`)
 - Optional extra: `pip install '.[embed]'` (python-mpv)
 - Wheel install verification script and release checksum generation
+- Debian `.deb` builder (`scripts/build_deb.sh`) and CI artifact
+- Experimental Flatpak (host-mpv bridge): `packaging/flatpak/`, `scripts/build_flatpak.sh`
 - [docs/KNOWN_LIMITATIONS.md](docs/KNOWN_LIMITATIONS.md) for alpha consumers
 
 ### Changed

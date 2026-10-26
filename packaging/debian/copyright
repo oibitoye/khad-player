@@ -1,0 +1,17 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Khad Media Player
+Upstream-Contact: https://github.com/oibitoye/khad-player
+Source: https://github.com/oibitoye/khad-player
+
+Files: *
+Copyright: Khad Media Player contributors
+License: TBD
+ Comment:
+  An open-source licence has not been confirmed by the founder yet.
+  Do not upload this package to Debian/Ubuntu archives or Flathub until
+  a licence is chosen and this file is updated. Local/private .deb
+  builds for testing are allowed under the repository owner's control.
+
+License: TBD
+ Licence text pending founder decision. See NOTICE.md for third-party
+ component acknowledgements (mpv, yt-dlp, GTK, Python).
