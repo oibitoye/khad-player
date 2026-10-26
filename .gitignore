@@ -1,0 +1,46 @@
+# Private engineering packet — do not publish
+plan.md
+suplementary1.md
+suplementary2.md
+writing-block.md
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.env
+*.log
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Application user state (never commit)
+history.json
+titles.json
+*.m3u
+*.pls
+*.mp4
+*.mkv
+*.mp3
+*.wav
+*.webm
+*.flac
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*~
+
+# Cursor / local plans
+.cursor/
+*.plan.md

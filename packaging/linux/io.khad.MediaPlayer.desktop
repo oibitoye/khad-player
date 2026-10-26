@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Khad Media Player
+Comment=Cross-platform media and IPTV player powered by mpv
+Exec=khad-media-player
+Icon=multimedia-video-player
+Terminal=false
+Categories=AudioVideo;Player;
+StartupNotify=true
+StartupWMClass=io.khad.MediaPlayer

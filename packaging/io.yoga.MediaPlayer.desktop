@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Yoga Media Player
+Comment=Touch-friendly media and IPTV player
+Exec=python3 /home/princewalzman/.local/share/yoga-media-player/app.py
+Icon=multimedia-video-player
+Terminal=false
+Categories=AudioVideo;Player;
+StartupNotify=true
