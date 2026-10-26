@@ -44,24 +44,6 @@ jobs:
       - name: Unit tests
         run: python -m pytest tests/unit -q
 
-      - name: Install mpv for optional integration tests
-        run: sudo apt-get update && sudo apt-get install -y mpv
-
-      - name: Integration tests
-        run: python -m pytest tests/integration -q
-
-      - name: Dependency sanity check (non-GTK soft probe)
-        run: |
-          python - <<'PY'
-          from khad_media_player.dependencies import check_dependencies
-          status = check_dependencies()
-          print(status)
-          assert status.get("mpv"), status
-          # yt-dlp may be absent on CI images; warn but do not fail baseline compile/test jobs
-          if not status.get("yt-dlp"):
-              print("NOTE: yt-dlp not on PATH in CI image (documented limitation)")
-          PY
-
       - name: Package build
         run: python -m build
 
@@ -72,6 +54,43 @@ jobs:
           name: dist-linux-py312
           path: dist/
           if-no-files-found: error
+
+  linux-integration:
+    name: Linux integration (mpv)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install package and development dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      - name: Install mpv (no recommends)
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends mpv
+          mpv --version | head -1
+
+      - name: Integration tests
+        run: python -m pytest tests/integration -q
+
+      - name: Dependency sanity check
+        run: |
+          python - <<'PY'
+          from khad_media_player.dependencies import check_dependencies
+          status = check_dependencies()
+          print(status)
+          assert status.get("mpv"), status
+          if not status.get("yt-dlp"):
+              print("NOTE: yt-dlp not on PATH in CI image (documented limitation)")
+          PY
 
   macos:
     name: macOS (non-GUI)

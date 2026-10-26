@@ -11,7 +11,7 @@ Embedded support must not be claimed for a platform until runtime testing demons
 
 ### CI coverage note
 
-- Linux GitHub Actions: compile, lint, unit tests, mpv integration (when apt mpv installs), package build
+- Linux GitHub Actions: compile, lint, unit tests, package build on the Python matrix; mpv integration in a dedicated `Linux integration (mpv)` job (`apt --no-install-recommends`)
 - macOS GitHub Actions (`macos-latest`, typically Apple Silicon): compile, lint, unit tests, package build — **not** native GTK/mpv GUI verification
 - Intel macOS: no dedicated free GitHub-hosted runner in this pipeline; treat as **NOT TESTED** until manual evidence exists
 
