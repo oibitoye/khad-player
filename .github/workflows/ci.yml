@@ -47,6 +47,12 @@ jobs:
       - name: Package build
         run: python -m build
 
+      - name: Verify wheel install
+        if: matrix.python-version == '3.12'
+        run: |
+          chmod +x scripts/verify_wheel_install.sh
+          ./scripts/verify_wheel_install.sh
+
       - name: Upload build artifacts
         if: matrix.python-version == '3.12'
         uses: actions/upload-artifact@v4
