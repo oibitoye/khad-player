@@ -14,8 +14,15 @@ fi
 
 python3 "$ROOT/scripts/check_dependencies.py"
 
-python3 -m pip install --user -e "$ROOT"
+if [[ ! -d "$ROOT/.venv" ]]; then
+  python3 -m venv "$ROOT/.venv"
+fi
+# shellcheck disable=SC1091
+source "$ROOT/.venv/bin/activate"
+python -m pip install -U pip
+python -m pip install -e "$ROOT"
 echo
-echo "Installed console command: khad-media-player"
+echo "Installed into $ROOT/.venv"
+echo "Run: source .venv/bin/activate && khad-media-player"
 echo "Desktop launcher: packaging/linux/io.khad.MediaPlayer.desktop"
-echo "Copy it to ~/.local/share/applications/ if desired."
+echo "Copy it to ~/.local/share/applications/ if desired (update Exec= to the venv binary)."

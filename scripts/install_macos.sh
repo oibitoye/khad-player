@@ -24,9 +24,17 @@ elif [[ -x /usr/local/bin/python3 ]]; then
 fi
 
 "$PYTHON" "$ROOT/scripts/check_dependencies.py"
-"$PYTHON" -m pip install --user -e "$ROOT"
+
+if [[ ! -d "$ROOT/.venv" ]]; then
+  "$PYTHON" -m venv "$ROOT/.venv"
+fi
+# shellcheck disable=SC1091
+source "$ROOT/.venv/bin/activate"
+python -m pip install -U pip
+python -m pip install -e "$ROOT"
 
 echo
-echo "Run with: khad-media-player"
-echo "Or: $PYTHON -m khad_media_player"
+echo "Installed into $ROOT/.venv"
+echo "Run: source .venv/bin/activate && khad-media-player"
+echo "Or: $ROOT/.venv/bin/python -m khad_media_player"
 echo "A distributable .app bundle is not included in this release."
