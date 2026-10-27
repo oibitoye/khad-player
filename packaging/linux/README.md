@@ -7,7 +7,7 @@ Build on Debian/Ubuntu:
 ```bash
 sudo apt-get install -y python3-pip python3-venv dpkg-dev
 ./scripts/build_deb.sh
-# → dist/khad-media-player_0.1.0~a1-1_all.deb
+# → dist/khad-media-player_0.1.0~a3-1_all.deb
 ```
 
 Install:
@@ -17,6 +17,10 @@ sudo apt-get install -y python3-gi python3-gi-cairo gir1.2-gtk-3.0 mpv yt-dlp
 sudo apt-get install -y ./dist/khad-media-player_*.deb
 khad-media-player
 ```
+
+The launcher is `#!/usr/bin/python3` and the package lives under
+`/usr/lib/python3/dist-packages` so it works on Bookworm/Ubuntu regardless of
+which Python minor version built the `.deb` in CI.
 
 The `.deb` depends on system GTK / mpv / yt-dlp (not bundled).
 

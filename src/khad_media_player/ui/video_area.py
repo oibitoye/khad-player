@@ -26,7 +26,8 @@ class VideoArea(Gtk.GLArea):
         self.set_auto_render(True)
         self.set_has_depth_buffer(False)
         self.set_has_stencil_buffer(False)
-        self.set_required_version(3, 0)
+        # Gdk rejects GL < 3.2 on modern stacks (Yoga / Bookworm Wayland).
+        self.set_required_version(3, 2)
         self.set_hexpand(True)
         self.set_vexpand(True)
         self.set_size_request(320, 180)
@@ -60,7 +61,7 @@ class VideoArea(Gtk.GLArea):
         scale = self.get_scale_factor()
         width = max(1, int(self.get_allocated_width() * scale))
         height = max(1, int(self.get_allocated_height() * scale))
-        self._backend.render_frame(width, height, fbo=0)
+        self._backend.render_frame(width, height)
         return True
 
     def _on_unrealize(self, *_args) -> None:

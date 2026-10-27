@@ -7,7 +7,11 @@ from typing import Any
 
 from khad_media_player.config import YTDL_FORMAT
 from khad_media_player.player.backend import PlaybackBackend
-from khad_media_player.player.opengl_proc import get_opengl_proc_address, opengl_available
+from khad_media_player.player.opengl_proc import (
+    current_draw_framebuffer,
+    get_opengl_proc_address_callback,
+    opengl_available,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -76,10 +80,12 @@ class EmbeddedBackend(PlaybackBackend):
             import mpv
 
             self._update_callback = on_update
+            # Must be a ctypes CFUNCTYPE, not a plain Python function.
+            self._get_proc_address = get_opengl_proc_address_callback()
             self._render_ctx = mpv.MpvRenderContext(
                 self._mpv,
                 "opengl",
-                opengl_init_params={"get_proc_address": get_opengl_proc_address},
+                opengl_init_params={"get_proc_address": self._get_proc_address},
             )
             self._render_ctx.update_cb = on_update
             return True
@@ -89,14 +95,15 @@ class EmbeddedBackend(PlaybackBackend):
             self._render_ctx = None
             return False
 
-    def render_frame(self, width: int, height: int, fbo: int = 0) -> bool:
+    def render_frame(self, width: int, height: int, fbo: int | None = None) -> bool:
         if self._render_ctx is None or width <= 0 or height <= 0:
             return False
         try:
+            target_fbo = current_draw_framebuffer() if fbo is None else fbo
             if self._render_ctx.update():
                 self._render_ctx.render(
                     flip_y=True,
-                    opengl_fbo={"w": width, "h": height, "fbo": fbo},
+                    opengl_fbo={"w": width, "h": height, "fbo": target_fbo},
                 )
             return True
         except Exception as error:  # noqa: BLE001
