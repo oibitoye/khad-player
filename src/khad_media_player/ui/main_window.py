@@ -37,7 +37,8 @@ class MainWindow:
 
         self.window = Gtk.ApplicationWindow(application=application)
         self.window.set_title(APP_NAME)
-        size = (960, 720) if playback.is_embedded() else (800, 600)
+        # Wide enough for side control rails + a dominant center video pane.
+        size = (1100, 700) if playback.is_embedded() else (900, 600)
         self.window.set_default_size(*size)
         self.window.add_events(Gdk.EventMask.KEY_PRESS_MASK)
         self.window.connect("key-press-event", self._on_key_press)
