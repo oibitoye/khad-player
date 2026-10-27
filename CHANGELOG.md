@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+## 0.1.0a5 — 2026-10-27 (tag: v0.1.0-alpha.5)
+
+### Added
+
+- Idle/suspend inhibit while status is Playing (prevents screen lock mid-video)
+- mpv `--stop-screensaver` for external and embedded backends
+
+### Fixed
+
+- Embedded Fullscreen now fills **video only** (hides header, tabs, and side rails)
+
 ## 0.1.0a4 — 2026-10-27 (tag: v0.1.0-alpha.4)
 
 ### Added
