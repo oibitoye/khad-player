@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "khad-media-player"
-version = "0.1.0a3"
+version = "0.1.0a4"
 description = "Cross-platform GTK media player powered by mpv"
 readme = "README.md"
 requires-python = ">=3.10"

@@ -20,6 +20,11 @@
   <launchable type="desktop-id">io.khad.MediaPlayer.desktop</launchable>
   <url type="homepage">https://github.com/oibitoye/khad-player</url>
   <releases>
+    <release version="0.1.0a4" date="2026-10-27" type="development">
+      <description>
+        <p>Fullscreen, three-column Now Playing, and Bookworm loadfile fallback.</p>
+      </description>
+    </release>
     <release version="0.1.0a3" date="2026-10-27" type="development">
       <description>
         <p>Fix Debian .deb launcher portability (system python3 + dist-packages).</p>
