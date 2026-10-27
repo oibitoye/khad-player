@@ -68,6 +68,7 @@ class EmbeddedBackend(PlaybackBackend):
                 osc="no",
                 input_default_bindings="no",
                 input_vo_keyboard="no",
+                stop_screensaver=True,
                 ytdl="yes",
                 ytdl_format=YTDL_FORMAT,
                 prefetch_playlist="yes",

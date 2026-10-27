@@ -17,6 +17,12 @@
 
 Embedded mode is preferred UX but only claimed per platform after runtime verification.
 
+## Screen lock
+
+While status is **Playing**, the app requests a session idle/suspend inhibit
+(`Gtk.Application.inhibit`) so the display does not lock mid-video. Inhibit is
+released on pause, stop, or quit. External mpv also uses `--stop-screensaver=yes`.
+
 ## Profiles
 
 - `linux-wayland` — Yoga-compatible GPU/Wayland/VAAPI options
