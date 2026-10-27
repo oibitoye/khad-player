@@ -16,6 +16,15 @@ from khad_media_player.player.opengl_proc import (
 logger = logging.getLogger(__name__)
 
 
+def _format_mpv_error(error: BaseException) -> str:
+    """Turn python-mpv's tuple-like errors into a short UI message."""
+    args = getattr(error, "args", ())
+    if args and isinstance(args[0], str) and args[0].strip():
+        return args[0]
+    text = str(error).strip()
+    return text or "Player not ready"
+
+
 def libmpv_importable() -> bool:
     try:
         import mpv  # noqa: F401
@@ -149,7 +158,7 @@ class EmbeddedBackend(PlaybackBackend):
             result = self._mpv.command(*args)
             return {"error": "success", "data": result}
         except Exception as error:  # noqa: BLE001
-            return {"error": str(error) or "Player not ready"}
+            return {"error": _format_mpv_error(error)}
 
     def is_ready(self) -> bool:
         return self._ready and self._mpv is not None
