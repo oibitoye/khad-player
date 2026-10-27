@@ -23,8 +23,8 @@ def test_get_proc_address_is_cfunction_type() -> None:
 
 
 def test_callback_type_matches_python_mpv_signature() -> None:
-    assert MpvGlGetProcAddressFn.restype is ctypes.c_void_p
-    assert list(MpvGlGetProcAddressFn.argtypes) == [
-        ctypes.c_void_p,
-        ctypes.c_char_p,
-    ]
+    # restype/argtypes live on CFUNCTYPE *instances*, not the factory type.
+    callback = get_opengl_proc_address_callback()
+    assert callback.restype is ctypes.c_void_p
+    assert list(callback.argtypes) == [ctypes.c_void_p, ctypes.c_char_p]
+    assert MpvGlGetProcAddressFn is not None
