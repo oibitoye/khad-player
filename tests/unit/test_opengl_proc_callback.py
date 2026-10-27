@@ -6,8 +6,8 @@ import ctypes
 import types
 
 from khad_media_player.player.opengl_proc import (
-    MpvGlGetProcAddressFn,
     OPEN_GL_GET_PROC_ADDRESS,
+    MpvGlGetProcAddressFn,
     get_opengl_proc_address_callback,
 )
 
