@@ -43,18 +43,19 @@ class MainWindow:
         self.window.add_events(Gdk.EventMask.KEY_PRESS_MASK)
         self.window.connect("key-press-event", self._on_key_press)
 
-        header = Gtk.HeaderBar()
-        header.set_title(APP_NAME)
-        header.set_subtitle(
+        self.header = Gtk.HeaderBar()
+        self.header.set_title(APP_NAME)
+        self.header.set_subtitle(
             "Embedded" if playback.is_embedded() else "External mpv"
         )
         hide = Gtk.Button(label="Hide")
         hide.connect("clicked", lambda _b: self.window.hide())
-        header.pack_end(hide)
+        self.header.pack_end(hide)
         close = Gtk.Button(label="Close")
         close.connect("clicked", lambda _b: application.quit())
-        header.pack_end(close)
-        self.window.set_titlebar(header)
+        self.header.pack_end(close)
+        self.window.set_titlebar(self.header)
+        self.window.connect("window-state-event", self._on_window_state)
 
         self.notebook = Gtk.Notebook()
 
@@ -104,16 +105,12 @@ class MainWindow:
         self.notebook.set_current_page(0)
 
     def toggle_fullscreen(self, _button=None) -> None:
-        """Fullscreen the GTK window (embedded) or the external mpv window."""
+        """Video-only fullscreen (embedded) or the external mpv window."""
         if self.playback.is_embedded():
             if self._gtk_fullscreen:
-                self.window.unfullscreen()
-                self._gtk_fullscreen = False
-                self.now_playing.set_status("Windowed")
+                self._set_embedded_video_fullscreen(False)
             else:
-                self.window.fullscreen()
-                self._gtk_fullscreen = True
-                self.now_playing.set_status("Fullscreen")
+                self._set_embedded_video_fullscreen(True)
             return
 
         result = self.playback.toggle_mpv_fullscreen()
@@ -121,6 +118,40 @@ class MainWindow:
             self.now_playing.set_status("Toggled mpv fullscreen")
         else:
             self.now_playing.set_status("Player not ready")
+
+    def _set_embedded_video_fullscreen(self, enabled: bool) -> None:
+        """Fill the display with the video pane; hide app chrome around it."""
+        if enabled:
+            self.notebook.set_current_page(0)
+            self.notebook.set_show_tabs(False)
+            self.notebook.set_show_border(False)
+            self.header.hide()
+            self.now_playing.set_chrome_visible(False)
+            self.window.fullscreen()
+            self._gtk_fullscreen = True
+            self.now_playing.set_status("Video fullscreen (Esc to exit)")
+        else:
+            self.window.unfullscreen()
+            self._restore_embedded_chrome()
+            self._gtk_fullscreen = False
+            self.now_playing.set_status("Windowed")
+
+    def _restore_embedded_chrome(self) -> None:
+        self.header.show_all()
+        self.notebook.set_show_tabs(True)
+        self.notebook.set_show_border(True)
+        self.now_playing.set_chrome_visible(True)
+
+    def _on_window_state(self, _window, event) -> bool:
+        # If the compositor exits fullscreen (gesture / system UI), restore chrome.
+        if not self.playback.is_embedded():
+            return False
+        is_fs = bool(event.new_window_state & Gdk.WindowState.FULLSCREEN)
+        if self._gtk_fullscreen and not is_fs:
+            self._restore_embedded_chrome()
+            self._gtk_fullscreen = False
+            self.now_playing.set_status("Windowed")
+        return False
 
     def _on_key_press(self, _widget, event) -> bool:
         keyval = event.keyval
