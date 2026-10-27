@@ -7,6 +7,8 @@
 ### Fixed
 
 - Debian `.deb` launcher used the CI Python shebang (`/opt/hostedtoolcache/...`) and installed into `python3.12/site-packages`, so the app appeared in menus but did not start on Debian Bookworm. Packages now ship `#!/usr/bin/python3` and `/usr/lib/python3/dist-packages`.
+- Queue refresh crashed when Gtk selection was unavailable (`AttributeError: NoneType.get_selected`).
+- Debian package now **Recommends** `python3-mpv` / `libmpv2` for optional embedded playback.
 
 ## 0.1.0a2 — 2026-10-26 (tag: v0.1.0-alpha.2)
 

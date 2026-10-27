@@ -51,9 +51,15 @@ class QueueTab:
         refresh_button.connect("clicked", self.refresh_queue)
         self.widget.pack_start(refresh_button, False, False, 0)
 
+    def _selected_row(self):
+        selection = self.queue_view.get_selection()
+        if selection is None:
+            return None, None
+        return selection.get_selected()
+
     def play_selected_queue(self, _button=None) -> None:
-        model, selected = self.queue_view.get_selection().get_selected()
-        if selected is None:
+        model, selected = self._selected_row()
+        if model is None or selected is None:
             self.queue_status.set_text("Select a track first")
             return
         index = model[selected][1] - 1
@@ -77,8 +83,8 @@ class QueueTab:
             )
 
     def remove_selected_queue(self, _button=None) -> None:
-        model, selected = self.queue_view.get_selection().get_selected()
-        if selected is None:
+        model, selected = self._selected_row()
+        if model is None or selected is None:
             self.queue_status.set_text("Select a track first")
             return
         index = model[selected][1] - 1
@@ -112,15 +118,22 @@ class QueueTab:
 
     def refresh_queue(self, _button=None) -> bool:
         selection = self.queue_view.get_selection()
-        model, selected = selection.get_selected()
-        selected_index = model[selected][1] - 1 if selected is not None else None
+        selected_index = None
+        if selection is not None:
+            model, selected = selection.get_selected()
+            if model is not None and selected is not None:
+                selected_index = model[selected][1] - 1
 
         rows = self.queue_service.display_rows()
         self.queue_store.clear()
         for row in rows:
             self.queue_store.append(list(row))
 
-        if selected_index is not None and selected_index < len(rows):
+        if (
+            selection is not None
+            and selected_index is not None
+            and selected_index < len(rows)
+        ):
             selection.select_path(Gtk.TreePath.new_from_indices([selected_index]))
 
         self.queue_status.set_text(f"{len(rows)} queued")
