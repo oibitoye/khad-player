@@ -11,8 +11,13 @@ from khad_media_player.player.playback_service import PlaybackService
 
 
 class NowPlayingTab:
-    def __init__(self, playback: PlaybackService) -> None:
+    def __init__(
+        self,
+        playback: PlaybackService,
+        on_toggle_fullscreen=None,
+    ) -> None:
         self.playback = playback
+        self._on_toggle_fullscreen = on_toggle_fullscreen
         self.widget = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
         self.widget.set_border_width(12)
 
@@ -21,12 +26,12 @@ class NowPlayingTab:
             frame = Gtk.Frame(label="Video")
             frame.add(video)
             self.widget.pack_start(frame, True, True, 0)
-            mode_hint = "Embedded playback (libmpv)"
+            mode_hint = "Embedded playback (libmpv) — Fullscreen or F11"
         else:
-            mode_hint = "External mpv window"
+            mode_hint = "External mpv window — Fullscreen / F11, or press f in mpv"
             placeholder = Gtk.Label(
                 label="Video plays in the separate mpv window.\n"
-                "Set KHAD_RENDER_MODE=embedded when libmpv is available."
+                "Use Fullscreen (or F11) here, or press f while the mpv window is focused."
             )
             placeholder.set_line_wrap(True)
             placeholder.set_justify(Gtk.Justification.CENTER)
@@ -45,6 +50,7 @@ class NowPlayingTab:
             ("Previous", lambda b: self.control(("playlist-prev", "weak"))),
             ("Pause / Resume", lambda b: self.control(("cycle", "pause"))),
             ("Next", lambda b: self.control(("playlist-next", "weak"))),
+            ("Fullscreen", self.toggle_fullscreen),
         ]
         for name, callback in actions:
             btn = Gtk.Button(label=name)
@@ -96,6 +102,16 @@ class NowPlayingTab:
     def control(self, action: tuple) -> None:
         result = self.playback.control(*action)
         if result.get("error") != "success":
+            self.status.set_text("Player not ready")
+
+    def toggle_fullscreen(self, _button=None) -> None:
+        if self._on_toggle_fullscreen is not None:
+            self._on_toggle_fullscreen()
+            return
+        result = self.playback.toggle_mpv_fullscreen()
+        if result.get("error") == "success":
+            self.status.set_text("Toggled fullscreen")
+        elif result.get("error") != "embedded-uses-gtk-window":
             self.status.set_text("Player not ready")
 
     def set_status(self, text: str) -> None:
