@@ -7,7 +7,6 @@ import types
 
 from khad_media_player.player.opengl_proc import (
     OPEN_GL_GET_PROC_ADDRESS,
-    MpvGlGetProcAddressFn,
     get_opengl_proc_address_callback,
 )
 
@@ -27,4 +26,3 @@ def test_callback_type_matches_python_mpv_signature() -> None:
     callback = get_opengl_proc_address_callback()
     assert callback.restype is ctypes.c_void_p
     assert list(callback.argtypes) == [ctypes.c_void_p, ctypes.c_char_p]
-    assert MpvGlGetProcAddressFn is not None
