@@ -11,6 +11,7 @@ from gi.repository import Gdk, GLib, Gtk
 from khad_media_player.config import APP_NAME
 from khad_media_player.player.playback_service import PlaybackService
 from khad_media_player.services.history_service import HistoryService
+from khad_media_player.services.idle_inhibit import IdleInhibitor
 from khad_media_player.services.queue_service import QueueService
 from khad_media_player.services.title_cache import TitleCache
 from khad_media_player.services.youtube_search import YouTubeSearchService
@@ -93,6 +94,8 @@ class MainWindow:
 
         self.window.add(self.notebook)
 
+        self._idle_inhibitor = IdleInhibitor(application, self.window)
+
         self.queue.refresh_queue()
         self.history.refresh_history()
         GLib.timeout_add_seconds(3, self.queue.refresh_queue)
@@ -165,7 +168,10 @@ class MainWindow:
             return True
         self.now_playing.set_status(state)
         self.search.set_status(state)
+        # Keep the display awake only while media is actively playing.
+        self._idle_inhibitor.set_playing(state == "Playing")
         return True
 
     def cancel_background(self) -> None:
+        self._idle_inhibitor.release()
         self.search.cancel_pending()

@@ -41,6 +41,7 @@ COMMON_MPV_OPTIONS: Sequence[str] = (
     "--video-align-y=0",
     "--video-zoom=0",
     "--force-window=no",
+    "--stop-screensaver=yes",
     "--prefetch-playlist",
     "--ytdl-raw-options=yes-playlist=",
     f"--ytdl-format={YTDL_FORMAT}",
