@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.1.0a3 — 2026-10-27 (tag: v0.1.0-alpha.3)
+
+### Fixed
+
+- Debian `.deb` launcher used the CI Python shebang (`/opt/hostedtoolcache/...`) and installed into `python3.12/site-packages`, so the app appeared in menus but did not start on Debian Bookworm. Packages now ship `#!/usr/bin/python3` and `/usr/lib/python3/dist-packages`.
+
 ## 0.1.0a2 — 2026-10-26 (tag: v0.1.0-alpha.2)
 
 Preview packaging cut including Debian `.deb` builder and experimental Flatpak (host-mpv). Still not production-ready.

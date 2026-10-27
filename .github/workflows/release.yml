@@ -89,6 +89,19 @@ jobs:
           chmod +x scripts/build_deb.sh
           ./scripts/build_deb.sh
 
+      - name: Verify .deb launcher portability
+        run: |
+          set -euo pipefail
+          DEB="$(ls -1 dist/khad-media-player_*.deb | head -1)"
+          STAGE="$(mktemp -d)"
+          dpkg-deb -x "$DEB" "$STAGE"
+          test "$(head -1 "$STAGE/usr/bin/khad-media-player")" = "#!/usr/bin/python3"
+          test -f "$STAGE/usr/lib/python3/dist-packages/khad_media_player/application.py"
+          if compgen -G "$STAGE/usr/lib/python3.*/site-packages" >/dev/null; then
+            echo "Non-portable site-packages layout found" >&2
+            exit 1
+          fi
+
       - name: Generate SHA256SUMS
         run: |
           cd dist

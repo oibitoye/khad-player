@@ -84,6 +84,23 @@ jobs:
           chmod +x scripts/build_deb.sh
           ./scripts/build_deb.sh
 
+      - name: Verify .deb is portable across Python minor versions
+        run: |
+          set -euo pipefail
+          DEB="$(ls -1 dist/khad-media-player_*.deb | head -1)"
+          STAGE="$(mktemp -d)"
+          dpkg-deb -x "$DEB" "$STAGE"
+          test "$(head -1 "$STAGE/usr/bin/khad-media-player")" = "#!/usr/bin/python3"
+          test -f "$STAGE/usr/lib/python3/dist-packages/khad_media_player/application.py"
+          if compgen -G "$STAGE/usr/lib/python3.*/site-packages" >/dev/null; then
+            echo "Non-portable site-packages layout found" >&2
+            find "$STAGE/usr/lib" -maxdepth 3 -type d >&2
+            exit 1
+          fi
+          # Import with system python3 (may differ from setup-python).
+          PYTHONPATH="$STAGE/usr/lib/python3/dist-packages" /usr/bin/python3 -c \
+            "from khad_media_player import __version__; print('ok', __version__)"
+
       - name: Upload .deb artifact
         uses: actions/upload-artifact@v4
         with:
