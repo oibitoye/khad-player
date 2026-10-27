@@ -5,7 +5,8 @@ from __future__ import annotations
 import gi
 
 gi.require_version("Gtk", "3.0")
-from gi.repository import GLib, Gtk
+gi.require_version("Gdk", "3.0")
+from gi.repository import Gdk, GLib, Gtk
 
 from khad_media_player.config import APP_NAME
 from khad_media_player.player.playback_service import PlaybackService
@@ -32,11 +33,14 @@ class MainWindow:
     ) -> None:
         self.application = application
         self.playback = playback
+        self._gtk_fullscreen = False
 
         self.window = Gtk.ApplicationWindow(application=application)
         self.window.set_title(APP_NAME)
         size = (960, 720) if playback.is_embedded() else (800, 600)
         self.window.set_default_size(*size)
+        self.window.add_events(Gdk.EventMask.KEY_PRESS_MASK)
+        self.window.connect("key-press-event", self._on_key_press)
 
         header = Gtk.HeaderBar()
         header.set_title(APP_NAME)
@@ -53,7 +57,10 @@ class MainWindow:
 
         self.notebook = Gtk.Notebook()
 
-        self.now_playing = NowPlayingTab(playback)
+        self.now_playing = NowPlayingTab(
+            playback,
+            on_toggle_fullscreen=self.toggle_fullscreen,
+        )
         self.notebook.append_page(self.now_playing.widget, Gtk.Label(label="Now Playing"))
 
         self.search = SearchTab(
@@ -94,6 +101,35 @@ class MainWindow:
     def _go_playing(self, url: str) -> None:
         self.now_playing.set_url(url)
         self.notebook.set_current_page(0)
+
+    def toggle_fullscreen(self, _button=None) -> None:
+        """Fullscreen the GTK window (embedded) or the external mpv window."""
+        if self.playback.is_embedded():
+            if self._gtk_fullscreen:
+                self.window.unfullscreen()
+                self._gtk_fullscreen = False
+                self.now_playing.set_status("Windowed")
+            else:
+                self.window.fullscreen()
+                self._gtk_fullscreen = True
+                self.now_playing.set_status("Fullscreen")
+            return
+
+        result = self.playback.toggle_mpv_fullscreen()
+        if result.get("error") == "success":
+            self.now_playing.set_status("Toggled mpv fullscreen")
+        else:
+            self.now_playing.set_status("Player not ready")
+
+    def _on_key_press(self, _widget, event) -> bool:
+        keyval = event.keyval
+        if keyval == Gdk.KEY_F11:
+            self.toggle_fullscreen()
+            return True
+        if keyval == Gdk.KEY_Escape and self._gtk_fullscreen:
+            self.toggle_fullscreen()
+            return True
+        return False
 
     def present(self) -> None:
         self.window.show_all()

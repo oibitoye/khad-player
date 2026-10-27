@@ -122,6 +122,12 @@ class PlaybackService:
     def control(self, *action: Any) -> dict[str, Any]:
         return self.command(*action)
 
+    def toggle_mpv_fullscreen(self) -> dict[str, Any]:
+        """Toggle fullscreen on the external mpv window (no-op for embedded)."""
+        if self.is_embedded():
+            return {"error": "embedded-uses-gtk-window"}
+        return self.command("cycle", "fullscreen")
+
     def playback_state_label(self) -> str | None:
         result = self.command("get_property", "idle-active")
         if result.get("error") != "success":
