@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+## 0.1.0a4 — 2026-10-27 (tag: v0.1.0-alpha.4)
+
+### Added
+
+- Fullscreen control (button + F11; Escape exits embedded fullscreen)
+- Three-column Now Playing layout for embedded video (side rails + center pane)
+
+### Fixed
+
+- `loadfile insert-next-play` fallback for Bookworm mpv/libmpv 0.35 (invalid parameter -4 when playing another URL while busy)
+
 ## 0.1.0a3 — 2026-10-27 (tag: v0.1.0-alpha.3)
 
 ### Fixed
