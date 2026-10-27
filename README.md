@@ -64,7 +64,7 @@ Licence file pending founder confirmation. Third-party notices: `NOTICE.md`.
 
 ## Preview release
 
-Current public preview target: **`v0.1.0-alpha.4`** (package `0.1.0a4`).  
+Current public preview target: **`v0.1.0-alpha.5`** (package `0.1.0a5`).  
 See [docs/RELEASE.md](docs/RELEASE.md) and [docs/KNOWN_LIMITATIONS.md](docs/KNOWN_LIMITATIONS.md).
 
 ## Contributing

@@ -7,7 +7,7 @@ Build on Debian/Ubuntu:
 ```bash
 sudo apt-get install -y python3-pip python3-venv dpkg-dev
 ./scripts/build_deb.sh
-# → dist/khad-media-player_0.1.0~a4-1_all.deb
+# → dist/khad-media-player_0.1.0~a5-1_all.deb
 ```
 
 Install:
